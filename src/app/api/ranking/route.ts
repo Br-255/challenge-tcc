@@ -12,9 +12,12 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Rodada ou data inválida' }, { status: 400 })
   }
   const db = getDb()
-  finalizeClosedRounds(db)
-  const rankings = round >= 1 && round <= 9 ? standings(db, date, round).slice(0, 100).map(({ id: _id, ...row }) => ({ ...row, round })) : []
-  const finalized = db.prepare(`SELECT state FROM hourly_rounds WHERE event_date = ? AND timezone = ? AND round = ?`).get(date, clock.timezone, round) as { state: string } | undefined
+  await finalizeClosedRounds(db)
+  const rankings = round >= 1 && round <= 9 ? (await standings(db, date, round)).slice(0, 100).map((row) => ({
+    nickname: row.nickname, correct_answers: row.correct_answers, total_time: row.total_time,
+    score: row.score, round_position: row.round_position, round,
+  })) : []
+  const finalized = (await db.query(`SELECT state FROM hourly_rounds WHERE event_date = $1 AND timezone = $2 AND round = $3`, [date, clock.timezone, round])).rows[0] as { state: string } | undefined
   return NextResponse.json({ round, currentRound: clock.round, date, timezone: clock.timezone, rankings,
     finalized: !!finalized, state: finalized?.state || 'open' }, { headers: { 'Cache-Control': 'no-store' } })
 }

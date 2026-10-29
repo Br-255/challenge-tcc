@@ -5,6 +5,6 @@ import { quizFailure } from '@/lib/quiz-http'
 export async function POST(req: NextRequest) {
   try {
     const { qrCode, deviceId } = await req.json()
-    return NextResponse.json(startAttempt(getDb(), qrCode, deviceId), { headers: { 'Cache-Control': 'no-store' } })
+    return NextResponse.json(await startAttempt(getDb(), qrCode, deviceId), { headers: { 'Cache-Control': 'no-store' } })
   } catch (error) { return quizFailure(error) }
 }

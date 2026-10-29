@@ -12,13 +12,13 @@ export async function POST(req: NextRequest) {
     }
 
     const db = getDb()
-    const admin = db.prepare('SELECT * FROM admins WHERE username = ?').get(username) as { password_hash: string } | undefined
+    const admin = (await db.query('SELECT * FROM admins WHERE username = $1', [username])).rows[0] as { password_hash: string } | undefined
 
     if (!admin || !verifyPassword(password, admin.password_hash)) {
       return NextResponse.json({ error: 'Credenciais inválidas' }, { status: 401 })
     }
 
-    const token = createAdminToken(username)
+    const token = await createAdminToken(username)
     const response = NextResponse.json({ success: true, username })
     response.cookies.set(ADMIN_COOKIE, token, {
       httpOnly: true,
@@ -42,7 +42,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ authenticated: false }, { status: 401 })
   }
 
-  const parsed = parseAdminToken(token)
+  const parsed = await parseAdminToken(token)
   if (!parsed) {
     return NextResponse.json({ authenticated: false }, { status: 401 })
   }

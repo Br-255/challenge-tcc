@@ -6,13 +6,20 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "db:check": "tsx scripts/database.ts check",
+    "db:migrate": "tsx scripts/database.ts migrate",
+    "db:seed": "tsx scripts/database.ts seed",
+    "db:setup": "tsx scripts/database.ts setup",
+    "test": "tsx scripts/test-backend.ts"
   },
   "dependencies": {
-    "better-sqlite3": "^13.0.3",
+    "@next/env": "^14.2.35",
     "framer-motion": "^14.5.0",
     "lucide-react": "^1.61.0",
-    "next": "^14.2.15",
+    "next": "^14.2.35",
+    "pg": "^8.16.3",
     "qrcode": "^1.5.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -20,8 +27,8 @@
     "zod": "^4.6.7"
   },
   "devDependencies": {
-    "@types/better-sqlite3": "^9.6.0",
     "@types/node": "^20",
+    "@types/pg": "^8.15.5",
     "@types/qrcode": "^1.5.5",
     "@types/react": "^18",
     "@types/react-dom": "^18",
@@ -31,6 +38,7 @@
     "eslint-config-next": "15.0.0",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.17",
+    "tsx": "^4.20.6",
     "typescript": "^5"
   }
 }
